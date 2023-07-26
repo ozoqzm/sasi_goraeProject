@@ -58,7 +58,14 @@ SITE_ID = 1
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': [
     'rest_framework.authentication.TokenAuthentication', 
+    'rest_framework.authentication.BasicAuthentication',
+    'rest_framework.authentication.SessionAuthentication',
     ],
+
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.AllowAny',  # 모든 사용자에게 권한.
+    # ],
+
 }
 
 MIDDLEWARE = [
@@ -121,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+# APPEND_SLASH=False
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
