@@ -3,10 +3,10 @@ from rest_framework.routers import SimpleRouter
 from . import views
 
 user_router = SimpleRouter(trailing_slash=True)
-user_router.register('users', views.UserViewSet)
+user_router.register('users', views.UserViewSet, basename='users')
 
 userInfo_router = SimpleRouter(trailing_slash=True)
-userInfo_router.register('userInfo', views.UserInfoViewSet)
+userInfo_router.register('userInfo', views.UserInfoViewSet, basename='userInfo')
 
 urlpatterns = [
     path('', include(user_router.urls)),
