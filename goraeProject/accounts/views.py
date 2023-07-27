@@ -2,22 +2,25 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from posts.models import UserInfo
 from .serializers import UserSerializer, UserInfoSerializer
-from rest_framework import viewsets
-from rest_framework.decorators import api_view, action
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
-class UserViewSet(viewsets.ModelViewSet) :
+class UserViewSet(ModelViewSet) :
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
+
+class UserInfoViewSet(ModelViewSet) :
+    queryset = UserInfo.objects.all()
+    serializer_class = UserInfoSerializer
+
     @action(detail=True, methods=['gets'])
-    def get_comment_all(self, request, pk=None) :
-        user = self.get_object()
-        user_all = user.set_user.all()
-        serializer = UserInfoSerializer(user_all, many=True)
+    def get_user_all(self, request, pk=None) :
+        userInfo = self.get_object()
+        userInfo_all = userInfo.set_userInfo.all()
+        serializer = UserInfoSerializer(userInfo_all, many=True)
         return Response(serializer.data)
     
-class UserInfoViewSet(viewsets.ModelViewSet) :
-    queryset = UserInfo.objects.all()
-    serailizer_class = UserInfoSerializer
-    
+    def perform_create(self, serializer) :
+        serializer.save(user=self.request.user)
