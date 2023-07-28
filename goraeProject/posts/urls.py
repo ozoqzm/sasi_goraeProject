@@ -1,11 +1,11 @@
 from rest_framework.routers import SimpleRouter, DefaultRouter
 from django.urls import path, include
-from .views import PostViewSet
+from .views import MessageViewSet
 
 
-post_router = DefaultRouter(trailing_slash=True)
-post_router.register('posts', PostViewSet, basename='post')
+message_router = DefaultRouter(trailing_slash=True)
+message_router.register('messages', MessageViewSet, basename='message')
 
 urlpatterns = [
-    path('', include(post_router.urls)),
+    path('', include(message_router.urls)),
 ]
