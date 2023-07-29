@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from posts.models import UserInfo
-from .serializers import UserSerializer, UserInfoSerializer
+from .serializers import UserSerializer, UserInfoSerializer, MypageSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,7 +9,6 @@ from rest_framework.response import Response
 class UserViewSet(ModelViewSet) :
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
 
 class UserInfoViewSet(ModelViewSet) :
     queryset = UserInfo.objects.all()
@@ -24,3 +23,9 @@ class UserInfoViewSet(ModelViewSet) :
     
     def perform_create(self, serializer) :
         serializer.save(user=self.request.user)
+
+class MypageViewSet(ModelViewSet) :
+    queryset = UserInfo.objects.all()
+    serializer_class = MypageSerializer
+    def perform_create(self, serializer) :
+        serializer.save(user=self.reqeust.user)
