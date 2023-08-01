@@ -24,6 +24,7 @@ class Message(models.Model) :
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='writer', null=True) #보내는사람
     receiver = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name='received_user')
     points = models.IntegerField(default=0) #포인트 필드
+    count = models.IntegerField(default=0) # 카운트 필드 
     def __str__(self) :
         return self.id
 
