@@ -1,15 +1,15 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+
 from posts.models import UserInfo
 
-class UserInfoSerializer(ModelSerializer) :
+class UserInfoSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
 
-    class Meta : 
+    class Meta:
         model = UserInfo
         fields = '__all__'
-
 
 class UserSerializer(ModelSerializer) :
     userInfo = serializers.SerializerMethodField()
