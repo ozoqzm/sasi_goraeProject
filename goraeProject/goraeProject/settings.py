@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'rest_framework_swagger',
-
+    'corsheaders',
     'drf_yasg',
+
     # installed apps
     'posts',
     'accounts',
@@ -63,14 +64,24 @@ REST_FRAMEWORK = {
     'rest_framework.authentication.BasicAuthentication',
     'rest_framework.authentication.SessionAuthentication',
     ],
-
+    # CamelCaseJSON 관련 설정
+    'DEFAULT_RENDERER_CLASSES': (
+    'djangorestframework_camel_case.render.CamelCaseJSONRenderer', 
+    'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+    'djangorestframework_camel_case.parser.CamelCaseFormParser', 
+    'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+    'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.AllowAny',  # 모든 사용자에게 권한.
     # ],
-
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
+    'django.middleware.common.CommonMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,6 +90,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# 모든 호스트 허용 
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+
 
 ROOT_URLCONF = 'goraeProject.urls'
 
