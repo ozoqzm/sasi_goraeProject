@@ -13,6 +13,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 class UserSerializer(ModelSerializer) :
     userInfo = serializers.SerializerMethodField()
+
     def create(self, validated_data) :
         user = User.objects.create_user(
             username = validated_data['username'],
@@ -20,21 +21,14 @@ class UserSerializer(ModelSerializer) :
             email = validated_data['email'],
         )
         return user
+
     class Meta :
         model = User
         fields = ['id', 'username', 'password', 'email', 'userInfo']
 
-    def get_userInfo(self, user) :
-        try : 
-            userInfo = UserInfo.objects.get(user=user)
-            return UserInfoSerializer(userInfo).data
-        except UserInfo.DoesNotExist:
-            return None 
-
 class MypageSerializer(ModelSerializer) :
-    user = serializers.ReadOnlyField(source='user.username')
+    user_info = UserInfoSerializer(source='userinfo', read_only=True)
 
-    class Meta : 
-        model = UserInfo
-        fields = ['user', 'nickname', 'profile', 'points', 'count']    
-
+    class Meta:
+        model = User
+        fields = '__all__'

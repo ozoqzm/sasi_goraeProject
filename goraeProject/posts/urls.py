@@ -10,8 +10,6 @@ message_router.register('messages', MessageViewSet, basename='message')
 received_router = DefaultRouter(trailing_slash=True)
 received_router.register(r'received/(?P<user_id>\d+)', ReceivedMessageViewSet, basename='received')
 
-
-
 urlpatterns = [
     path('', include(message_router.urls)),
     path('',include(received_router.urls)),

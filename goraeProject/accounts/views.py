@@ -5,7 +5,7 @@ from .serializers import UserSerializer, UserInfoSerializer, MypageSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
 class UserViewSet(ModelViewSet) :
     queryset = User.objects.all()
@@ -25,13 +25,11 @@ class UserInfoViewSet(ModelViewSet) :
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)  # 현재 로그인한 사용자를 자동으로 설정
+        serializer.save(user=request.user)  
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    # def perform_create(self, serializer) :
-    #    serializer.save(user=self.request.user)
 
-class MypageViewSet(ModelViewSet) :
-    queryset = UserInfo.objects.all()
-    serializer_class = MypageSerializer
-    def perform_create(self, serializer) :
-        serializer.save(user=self.reqeust.user)
+class MypageViewSet(ModelViewSet):
+    serializer_class = UserInfoSerializer
+    def get_queryset(self):
+        userInfo = UserInfo.objects.filter(user=self.request.user)
+        return userInfo

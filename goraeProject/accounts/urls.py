@@ -5,6 +5,7 @@ from . import views
 user_router = SimpleRouter(trailing_slash=True)
 user_router.register('users', views.UserViewSet, basename='users')
 user_router.register('userInfo', views.UserInfoViewSet, basename='userInfo')
+user_router.register('mypage', views.MypageViewSet, basename='mypage')
 
 urlpatterns = [
     path('', include(user_router.urls)), 
