@@ -188,7 +188,6 @@ const Main = () => {
         <DropList>
           {postList.map((e) => (
             <BoardItem postID={e.id} />
-            // user_id 수정
           ))}
         </DropList>
         <Whale></Whale>

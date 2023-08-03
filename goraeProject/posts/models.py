@@ -25,6 +25,7 @@ class Message(models.Model) :
     receiver = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name='received_user')
     points = models.IntegerField(default=0) #포인트 필드
     count = models.IntegerField(default=0) # 카운트 필드 
-    def __str__(self) :
+    annonymous = models.IntegerField(default=0) # default = 0 익명x
+    def str(self) :
         return self.id
 

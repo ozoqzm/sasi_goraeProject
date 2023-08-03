@@ -44,7 +44,7 @@ const InputBox = styled.textarea`
   position: relative;
   margin: auto;
   width: 337px;
-  height: 390px;
+  height: 150px;
   border: none;
   background: none;
   outline: none;
@@ -109,12 +109,21 @@ const Read = () => {
   const [post, setPost] = useState(null);
   const [postLoading, setPostLoading] = useState(true);
 
+  // postID변경 시에만
   useEffect(() => {
     axios.get(`http://127.0.0.1:8000/messages/${postID}`).then((response) => {
       setPost(response.data);
       setPostLoading(false);
     });
-  }, []);
+  }, [postID]);
+
+  // writer에 익명인지 post.writer인지 판별해서 저장
+  // post가 변경될 때마다 업데이트 해줘야 함!!
+  const [viewWriter, setViewWriter] = useState();
+  useEffect(() => {
+    if (post && post.annonymous == 1) setViewWriter("익명");
+    else setViewWriter(post && post.writer);
+  }, [post]);
 
   return (
     <Container>
@@ -122,12 +131,16 @@ const Read = () => {
         <Back onClick={gotoMain}></Back>
         <InputBorder>
           <ProfilePic></ProfilePic>
-          <UserName>{post && post.writer}</UserName>
+          <UserName>{viewWriter}</UserName>
           {postLoading ? (
             <h2>loading...</h2>
           ) : (
             <InputBox>{post && post.content}</InputBox>
           )}
+          <img
+            src={post && post.image}
+            style={{ display: "block", margin: "auto", width: "300px" }}
+          />
         </InputBorder>
       </ContentBox>
       <div>
