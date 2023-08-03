@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useState } from "react";
+import { useEffect } from "react";
 
 // 물방울 이미지 수정 필요 (누끼)
 const Drop = styled.div`
@@ -35,11 +37,11 @@ const BoardItemBlock = styled.div`
   }
 `;
 
-const BoardItem = ({ user_id, post_id }) => {
+const BoardItem = ({ postID }) => {
   const navigate = useNavigate();
 
   const goPost = () => {
-    navigate(`/Read/${user_id}/${post_id}`); // user_id, post_id read에 전달
+    navigate(`/Read/${postID}`); // user_id, post_id read에 전달
   };
 
   // 물방울 이미지 난수 설정
@@ -49,12 +51,7 @@ const BoardItem = ({ user_id, post_id }) => {
   }, []);
 
   return (
-    <Drop
-      key={compl.id}
-      onClick={() => {
-        goPost;
-      }}
-    >
+    <Drop onClick={goPost}>
       {" "}
       <img
         src={`${process.env.PUBLIC_URL}/images/drop${

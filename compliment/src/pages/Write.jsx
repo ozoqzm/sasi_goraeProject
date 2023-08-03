@@ -1,4 +1,3 @@
-// Add.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -49,11 +48,11 @@ const InputBox = styled.textarea`
   outline: none;
   resize: none;
 `;
-const CheckSet = styled.div`
-  position: relative;
-  left: 250px;
-  display: inline-block;
-`;
+// const CheckSet = styled.div`
+//   position: relative;
+//   left: 250px;
+//   display: inline-block;
+// `;
 const CameraBtn = styled.div`
   position: relative;
   left: 15px;
@@ -118,11 +117,11 @@ const Write = () => {
     navigate("/Main");
   };
   const [inputs, setInputs] = useState({
-    title: "",
+    receiver: "",
     content: "",
   });
 
-  const { title, content } = inputs;
+  const { receiver, content } = inputs;
   const onChange = (e) => {
     const { value, name } = e.target;
     setInputs({
@@ -131,23 +130,23 @@ const Write = () => {
     });
   };
 
-  const { user_id } = useParams();
   const onSubmit = () => {
     try {
       // HTTP POST 요청으로 새로운 게시물 생성
       axios
-        .post(`http://127.0.0.1:8000/received/${user_id}`, {
+        .post(`http://127.0.0.1:8000/messasges/`, {
           content: inputs.content,
+          receiver: inputs.receiver,
         })
-        .then(() => {
-          gotoMain(); // 메인 페이지로 이동
-        });
+        .then(() => window.location.reload());
 
       // 입력값 초기화
       setInputs({
-        title: "",
+        receiver: 1,
         content: "",
       });
+
+      //navigate("/Main"); // 메인으로 이동
     } catch (error) {
       // 에러 발생 시 에러 처리
       console.error("Error creating new post:", error);
@@ -183,6 +182,14 @@ const Write = () => {
               placeholder="칭찬을 입력해주세요!"
               required
             ></InputBox>
+            <input
+              name="receiver"
+              value={receiver}
+              type="number"
+              onChange={onChange}
+              placeholder="receiver입력"
+              required
+            ></input>
             <div style={{ height: "190px", margin: "auto" }}>
               {imageFile && (
                 <img

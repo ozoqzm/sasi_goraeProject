@@ -32,7 +32,7 @@ function App() {
           <Route path="/Main" element={<Main />} />{" "}
           <Route path="/Write" element={<Write />} />{" "}
           <Route path="/Complete" element={<Complete />} />{" "}
-          <Route path="/Read" element={<Read />} />{" "}
+          <Route path="/Read/:postID" element={<Read />} />{" "}
           <Route path="/Main" element={<Main />} />{" "}
           <Route path="/Signup" element={<Signup />} />{" "}
           <Route path="/Start" element={<Start />} />

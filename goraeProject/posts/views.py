@@ -16,7 +16,8 @@ class MessageViewSet(ModelViewSet):
     # authentication_classes = [BasicAuthentication, SessionAuthentication]
 
     #Permission 기능 : isAuthenticated(읽기권한 x) /IsAuthenticatedOrReadOnly
-    permission_classes= [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes= [ IsAuthorOrReadOnly]
+    # permission_classes= [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
     queryset = Message.objects.all()
     serializer_class = MessageSerializer

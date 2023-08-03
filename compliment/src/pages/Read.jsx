@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ModalBasic from "./ModalBasic";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   position: relative;
@@ -79,89 +81,67 @@ const MenuBtn = styled.button`
 `;
 
 const Read = () => {
-  const [compls, setCompls] = useState([]);
-  const [date, setDate] = useState(""); // 날짜 바꾸기 (닉네임)
-  const [text, setText] = useState(""); // 내용 바꾸기
   const navigate = useNavigate();
-  const location = useLocation();
-  const keyId = location.state.keyId; // useLocation으로 값 받아옴
-  const savedcompls = localStorage.getItem("compls"); // 로컬 스토리지에서 가져오기
 
   const gotoMain = () => {
     navigate("/Main");
   };
 
-  useEffect(() => {
-    if (savedcompls) {
-      setCompls(JSON.parse(savedcompls)); // 칭찬들 배열 생성
-    }
-  }, [savedcompls]);
-
-  useEffect(() => {
-    const complToUpdate = compls.find((compl) => compl.id === parseInt(keyId));
-    if (complToUpdate) {
-      // id 가 일치하면.. 이 값을 인 풋에 띄워줘야 함
-      setDate(complToUpdate.date);
-      setText(complToUpdate.text);
-    }
-  }, [compls, keyId]);
-
   // 글 삭제 버튼 누를 시
   const handleDeleteButton = () => {
-    const updatedcompls = compls.filter(
-      (compl) => compl.id !== parseInt(keyId)
-    );
-    setCompls(updatedcompls);
-    localStorage.setItem("compls", JSON.stringify(updatedcompls));
     navigate("/Main");
   };
 
   // 글 수정 버튼 누를 시
   const handleUpdateButton = () => {
-    const updatedcompls = compls.map((compl) =>
-      compl.id === parseInt(keyId) ? { ...compl, text: text } : compl
-    );
-    setCompls(updatedcompls);
-    localStorage.setItem("compls", JSON.stringify(updatedcompls));
     navigate("/Main");
   };
 
-  // 모달창 노출 여부 state
-  const [modalOpen, setModalOpen] = useState(false);
+  // // 모달창 노출 여부 state
+  // const [modalOpen, setModalOpen] = useState(false);
 
-  // 모달창 노출
-  const showModal = () => {
-    setModalOpen(true, keyId);
-  };
+  // // 모달창 노출
+  // const showModal = () => {
+  //   setModalOpen(true, keyId);
+  // };
+
+  const { postID } = useParams();
+  const [post, setPost] = useState(null);
+  const [postLoading, setPostLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`http://127.0.0.1:8000/messages/${postID}`).then((response) => {
+      setPost(response.data);
+      setPostLoading(false);
+    });
+  }, []);
 
   return (
     <Container>
       <ContentBox>
         <Back onClick={gotoMain}></Back>
-        <form>
-          <InputBorder>
-            <ProfilePic></ProfilePic>
-            <UserName>{date}</UserName>
-            <InputBox
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            ></InputBox>
-          </InputBorder>
-        </form>
+        <InputBorder>
+          <ProfilePic></ProfilePic>
+          <UserName>{post && post.writer}</UserName>
+          {postLoading ? (
+            <h2>loading...</h2>
+          ) : (
+            <InputBox>{post && post.content}</InputBox>
+          )}
+        </InputBorder>
       </ContentBox>
       <div>
-        <MenuBtn onClick={showModal}>
+        <MenuBtn>
           {" "}
           <img src={`${process.env.PUBLIC_URL}/images/menudot.svg`} />
         </MenuBtn>
-        {modalOpen && (
+        {/* {modalOpen && (
           <ModalBasic
             setModalOpen={setModalOpen}
             handleDeleteButton={handleDeleteButton}
             handleUpdateButton={handleUpdateButton}
           />
-        )}
+        )} */}
       </div>
     </Container>
   );

@@ -142,17 +142,12 @@ const Drop = styled.div`
 // 페이지 이동
 const Main = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { nickname } = location.state || { nickname: "" };
-
   const gotoMypage = () => {
     navigate("/Mypage");
   };
-
   const gotoSplash = () => {
     navigate("/");
   };
-
   const handleAddButton = () => {
     navigate("/Write"); // 쓰기 페이지로 이동/ userid 넘겨야함..
   };
@@ -165,9 +160,7 @@ const Main = () => {
       setLoading(true);
       try {
         // API 호출
-        const response = await axios.get(
-          `http://127.0.0.1:8000/received/${user_id}`
-        );
+        const response = await axios.get("http://127.0.0.1:8000/messages");
         setPostList(response.data); // API 응답으로 받은 데이터를 state에 저장
         // user_id 로그인하고 전달받기
       } catch (error) {
@@ -179,7 +172,7 @@ const Main = () => {
   }, []);
 
   if (loading) {
-    return <BoardListBlock>대기중...</BoardListBlock>;
+    return <DropList>대기중...</DropList>;
   }
 
   return (
@@ -190,13 +183,11 @@ const Main = () => {
           <UserImg></UserImg>
         </UserCircle>
         {/* 이름 받아오기 */}
-        <TextBox>
-          {nickname ? `${nickname}님의 고래예요.` : "고래예요."}
-        </TextBox>
+        <TextBox>{}님의 고래예요.</TextBox>
         <TextBox2>칭찬으로 고래를 춤추게 만들어보세요!</TextBox2>
         <DropList>
           {postList.map((e) => (
-            <BoardItem key={e.id} user_id={e.id} post_id={e.id} />
+            <BoardItem postID={e.id} />
             // user_id 수정
           ))}
         </DropList>
