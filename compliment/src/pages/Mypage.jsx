@@ -162,7 +162,7 @@ const Mypage = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/mypage/`).then((response) => {
+    axios.get(`http://127.0.0.1:8000/users/`).then((response) => {
       setUserData(response.data);
       setLoading(false); // 데이터 가져오기가 완료되면 로딩 상태를 false로 변경
     });
@@ -173,27 +173,6 @@ const Mypage = () => {
     return <div>Loading...</div>; // 데이터를 가져오는 중에는 로딩 메시지를 표시
   }
 
-  // userData 안에 username이 존재하는지 확인하여 데이터가 있는지 여부를 판단
-  const isUserDataAvailable = userData;
-  if (userData) {
-    const user = userData[0]; // userData 배열의 첫 번째 요소를 가져옴
-    return (
-      <div>
-        <div>데이터 있어요</div>
-        <div>Username: {user}</div>
-      </div>
-    );
-    //     <div>Email: {user.email}</div>
-    //     <div>Points: {user.points}</div>
-    //   </div>
-    // );
-    <return>
-      <div>{userData.length}</div>
-    </return>;
-  }
-  if (!isUserDataAvailable) {
-    return <div>No data available</div>;
-  }
   return (
     <Container>
       <ContentBox>
@@ -211,12 +190,12 @@ const Mypage = () => {
           />
         </ProfileImg>
 
-        <Username>{userData.username}</Username>
-        <Useremail>{userData.email}</Useremail>
+        <Username>{userData[0].username}</Username>
+        <Useremail>{userData[0].email}</Useremail>
         <CoinBox>
           <img src={`${process.env.PUBLIC_URL}/images/coinbox.svg`} alt="" />
         </CoinBox>
-        <CoinText>{userData.points}P</CoinText>
+        <CoinText>20P</CoinText>
         <CoinUse>
           <img
             src={`${process.env.PUBLIC_URL}/images/point_use.svg`}
