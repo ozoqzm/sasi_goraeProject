@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
 
 const Container = styled.div`
   position: relative;
@@ -144,37 +145,66 @@ const Start_text = styled.div`
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [nickname, setNickname] = useState("");
-  const [email, setEmail] = useState(""); // 이메일 상태 정의
-  const [password, setPassword] = useState(""); // 비밀번호 상태 정의
-  // ... (이메일과 비밀번호 상태 등 추가)
+  const [inputs, setInputs] = useState({
+    username: "",
+    password: "",
+    email: "",
+  });
 
-  const handleStartBoxClick = () => {
-    // 회원가입 정보를 저장하고, 메인 페이지로 이동
-    const userInfo = { nickname, email, password };
-    localStorage.setItem("userInfo", JSON.stringify(userInfo));
-    navigate("/login");
+  const { username, password, email } = inputs;
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  const onSubmit = () => {
+    try {
+      // HTTP POST 요청으로 새로운 회원가입 정보 전송
+      axios.post("http://127.0.0.1:8000/users/", {
+        username: inputs.username,
+        password: inputs.password,
+        email: inputs.email,
+      });
+
+      // 입력값 초기화
+      setInputs({
+        username: "",
+        password: "",
+        email: "",
+      });
+
+      // 로그인 페이지로 이동
+      navigate("/Login");
+    } catch (error) {
+      // 에러 발생 시 에러 처리
+      console.error("Error creating new post:", error);
+    }
   };
 
   return (
     <Container>
       <Title>회원가입</Title>
-      <p1>
+      <div>
         <Name>닉네임</Name>
-        {/* 닉네임 입력 시 상태 업데이트 */}
-        <Name_box onChange={(e) => setNickname(e.target.value)} />
-      </p1>
-      <p2>
+        <Name_box name="username" value={username} onChange={onChange} />
+      </div>
+      <div>
         <Email>이메일</Email>
-        {/* 이메일 입력 시 상태 업데이트 */}
-        <Email_box onChange={(e) => setEmail(e.target.value)} />
-      </p2>
-      <p3>
+        <Email_box name="email" value={email} onChange={onChange} />
+      </div>
+      <div>
         <Password>비밀번호</Password>
-        {/* 비밀번호 입력 시 상태 업데이트 */}
-        <Password_box onChange={(e) => setPassword(e.target.value)} />
-      </p3>
-      <Start_box onClick={handleStartBoxClick}>
+        <Password_box
+          type="password"
+          name="password"
+          value={password}
+          onChange={onChange}
+        />
+      </div>
+      <Start_box onClick={onSubmit}>
         <Start_text>시작하기</Start_text>
       </Start_box>
     </Container>

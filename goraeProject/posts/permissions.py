@@ -9,3 +9,4 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
         # 요청자 확인
         return obj.writer == request.user
+

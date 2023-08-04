@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import axios from "axios";
 
 const Container = styled.div`
   position: relative;
@@ -116,32 +117,67 @@ const Start_text = styled.div`
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [inputs, setInputs] = useState({
+    password: "",
+    username: "",
+  });
 
-  const handleMainButtonClick = () => {
-    navigate("/main", { state: { nickname: getStoredNickname() } });
+  const { password, username } = inputs;
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
   };
 
-  // Function to retrieve the nickname from local storage
-  const getStoredNickname = () => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    return userInfo?.nickname || ""; // Return empty string if nickname is not available
+  const onSubmit = async () => {
+    try {
+      // HTTP POST 요청으로 새로운 회원가입 정보 전송
+      const response = await axios.post("http://127.0.0.1:8000/login/", {
+        password: inputs.password,
+        username: inputs.username,
+      });
+
+      // 로그인 성공한 경우
+      if (response.status >= 200 && response.status <= 299) {
+        console.log("Logged in successfully:", response.data);
+        // Main 페이지로 이동하는 로직 추가
+        console.log(username);
+        navigate("/Main", { state: username });
+      } else {
+        // 틀린 경우 초기화
+        setInputs({
+          password: "",
+          username: "",
+        });
+        // 다른 상태 코드인 경우 (예: 401 에러 처리는 이미 인터셉터에서 처리됨)
+        console.error("Unexpected status code:", response.status);
+        navigate("/Login");
+        // 에러 처리 또는 사용자에게 다른 처리 안내 등을 추가할 수 있습니다.
+      }
+    } catch (error) {
+      // 에러 발생 시 에러 처리
+      console.error("Error creating new post:", error);
+    }
   };
 
   return (
     <Container>
       <Title>로그인</Title>
-      <p1>
-        <Email>이메일</Email>
-        <Email_box onChange={(e) => setEmail(e.target.value)} />
-      </p1>
-      <p2>
-        <Password>비밀번호</Password>
-        <Password_box onChange={(e) => setPassword(e.target.value)} />
-      </p2>
 
-      <Start_box onClick={handleMainButtonClick}>
+      <Email>이름</Email>
+      <Email_box name="username" value={username} onChange={onChange} />
+
+      <Password>비밀번호</Password>
+      <Password_box
+        type="password"
+        name="password"
+        value={password}
+        onChange={onChange}
+      />
+
+      <Start_box onClick={onSubmit}>
         <Start_text>로그인하기</Start_text>
       </Start_box>
     </Container>

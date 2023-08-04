@@ -139,8 +139,31 @@ const Drop = styled.div`
   display: inline-block;
 `;
 
-// 페이지 이동
 const Main = () => {
+  const location = useLocation();
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const usernameFromLocation = location.state; // useLocation으로 username 받아왓음
+    if (usernameFromLocation) {
+      setUsername(usernameFromLocation); // 받아온걸 username 상태로 저장
+    }
+  }, [location.state]); // location.state가 바뀔
+
+  // username 값이 변경될 때마다 LocalStorage에 저장
+  useEffect(() => {
+    localStorage.setItem("username", username);
+  }, [username]);
+
+  useEffect(() => {
+    // 페이지가 로드될 때마다 LocalStorage에서 username 값을 가져와서 상태에 저장
+    const usernameFromStorage = localStorage.getItem("username");
+    if (usernameFromStorage) {
+      setUsername(usernameFromStorage);
+    }
+  }, []);
+
+  // 페이지 이동 코드들
   const navigate = useNavigate();
   const gotoMypage = () => {
     navigate("/Mypage");
@@ -149,11 +172,13 @@ const Main = () => {
     navigate("/");
   };
   const handleAddButton = () => {
-    navigate("/Write"); // 쓰기 페이지로 이동/ userid 넘겨야함..
+    navigate("/Write"); // 쓰기 페이지로 이동/ 나중에 userid 넘겨야함..
   };
 
+  // const [userList, setUserList] = useState([]);
   const [postList, setPostList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -183,7 +208,7 @@ const Main = () => {
           <UserImg></UserImg>
         </UserCircle>
         {/* 이름 받아오기 */}
-        <TextBox>{}님의 고래예요.</TextBox>
+        <TextBox>{username}님의 고래예요.</TextBox>
         <TextBox2>칭찬으로 고래를 춤추게 만들어보세요!</TextBox2>
         <DropList>
           {postList.map((e) => (

@@ -1,8 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import ModalBasic_p from "./ModalBasic_p";
 import { copyToClipboard } from "./copyToClipboard";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const Container = styled.div`
   position: relative;
@@ -34,14 +36,11 @@ const Username = styled.div`
   width: 80px;
   height: 27px;
   left: 150px;
-
   font-family: "Inter";
   font-style: normal;
   font-weight: 700;
   font-size: 22px;
   line-height: 27px;
-  /* identical to box height */
-
   color: #3b6ae3;
 `;
 
@@ -52,14 +51,11 @@ const Useremail = styled.div`
   height: 17px;
   left: calc(50% - 162px / 2);
   margin-top: 8px;
-
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
-  /* identical to box height */
-
   color: #787878;
 `;
 
@@ -108,7 +104,6 @@ const Logoutbox = styled.div`
   margin-bottom: 10px;
 `;
 
-// 토스트 추가 부분
 const ToastMessage = styled.div`
   position: absolute;
   width: 270px;
@@ -122,94 +117,83 @@ const ToastMessage = styled.div`
   background: #fff;
   z-index: 999;
   display: ${(props) => (props.show ? "block" : "none")};
-
   color: #a3a3a3;
   text-align: center;
   font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 17px; /* 121.429% */
+  line-height: 17px;
   letter-spacing: -0.5px;
 `;
 
 const Mypage = () => {
-  // 페이지 넘어가게 해 주는 코드
   const navigate = useNavigate();
 
-  // Profile로 이동
   const onClickImg = () => {
-    navigate("/Profile"); // '/Profile'로 수정
+    navigate("/Profile");
   };
 
-  //Pointshop으로 이동
   const onClickImg2 = () => {
-    navigate("/Pointshop"); // '/Profile'로 수정
+    navigate("/Pointshop");
   };
 
-  // Main 이동
   const onClickImg3 = () => {
-    navigate("/"); // '/Profile'로 수정
+    navigate("/");
   };
 
-  // 모달창 노출 여부 state
   const [modalOpen, setModalOpen] = useState(false);
 
-  // 모달창 노출
   const showModal = () => {
     setModalOpen(true);
   };
 
-  // 토스트 메시지를 보여줄지 여부를 제어하는 상태 변수
   const [showToast, setShowToast] = useState(false);
 
   const onClickUrlBox = () => {
     const url =
-      "https://www.figma.com/file/kyFRDzPJCXeYxq6pbFB0WG/%EC%A3%BC%EC%97%B0%EC%A7%84?node-id=167%3A160&mode=dev"; // 실제 복사하고자 하는 URL 주소를 입력
-    copyToClipboard(url); // 유틸리티 함수를 사용하여 URL을 클립보드에 복사
-    setShowToast(true); // 이미지를 클릭하면 토스트 메시지를 보여주도록 설정
-    setTimeout(() => setShowToast(false), 1000); // 1초 후에 토스트 메시지를 숨김
+      "https://www.figma.com/file/kyFRDzPJCXeYxq6pbFB0WG/%EC%A3%BC%EC%97%B0%EC%A7%84?node-id=167%3A160&mode=dev";
+    copyToClipboard(url);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 1000);
   };
 
-  // 닉네임 입력받은 값 출력되도록 해 주기
-  const location = useLocation();
-  const nickname = location?.state?.nickname; // 넘겨받은 닉네임 값
-
-  const profileImage = location?.state?.profileImage; // 전달된 이미지 URL 가져오기
-  const defaultProfileImageUrl = `${process.env.PUBLIC_URL}/images/profile.svg`; // default로 저장되는 이미지 설정
-
-  // 이미지 URL 상태 변수
-  const [profileImageUrl, setProfileImageUrl] = useState(
-    defaultProfileImageUrl
-  );
-
-  // 이미지 URL 업데이트
-  useEffect(() => {
-    if (profileImage) {
-      setProfileImageUrl(URL.createObjectURL(profileImage));
-    } else {
-      setProfileImageUrl(defaultProfileImageUrl);
-    }
-  }, [profileImage]);
-
-  // 포인트 점수 반영 부분
-  const [compls, setCompls] = useState([]);
-  const [point, setPoint] = useState([0]);
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    const savedcompls = localStorage.getItem("compls");
-    if (savedcompls) {
-      setCompls(JSON.parse(savedcompls));
-    }
+    axios.get(`http://127.0.0.1:8000/mypage/`).then((response) => {
+      setUserData(response.data);
+      setLoading(false); // 데이터 가져오기가 완료되면 로딩 상태를 false로 변경
+    });
   }, []);
 
-  // 포인트 콘솔에 출력 (배열 크기)
-  useEffect(() => {
-    const arrayLength = compls.length;
-    //console.log(arrayLength);
-    setPoint(arrayLength * 20); // 일단 글 개수당 20점씩 곱함
-  }, [compls]);
+  // 데이터를 성공적으로 가져온 경우에만 정보를 보여줌
+  if (loading) {
+    return <div>Loading...</div>; // 데이터를 가져오는 중에는 로딩 메시지를 표시
+  }
 
+  // userData 안에 username이 존재하는지 확인하여 데이터가 있는지 여부를 판단
+  const isUserDataAvailable = userData;
+  if (userData) {
+    const user = userData[0]; // userData 배열의 첫 번째 요소를 가져옴
+    return (
+      <div>
+        <div>데이터 있어요</div>
+        <div>Username: {user}</div>
+      </div>
+    );
+    //     <div>Email: {user.email}</div>
+    //     <div>Points: {user.points}</div>
+    //   </div>
+    // );
+    <return>
+      <div>{userData.length}</div>
+    </return>;
+  }
+  if (!isUserDataAvailable) {
+    return <div>No data available</div>;
+  }
   return (
     <Container>
       <ContentBox>
@@ -221,18 +205,23 @@ const Mypage = () => {
           />
         </Back>
         <ProfileImg>
-          <img src={profileImageUrl} alt="Profile" />
+          <img
+            src={`${process.env.PUBLIC_URL}/images/profile.svg`}
+            alt="Profile"
+          />
         </ProfileImg>
-        <Username>{nickname || "주연진"}</Username>
-        <Useremail>yeonjin0822@gmail.com</Useremail>
+
+        <Username>{userData.username}</Username>
+        <Useremail>{userData.email}</Useremail>
         <CoinBox>
-          <img src={`${process.env.PUBLIC_URL}/images/coinbox.svg`} />
+          <img src={`${process.env.PUBLIC_URL}/images/coinbox.svg`} alt="" />
         </CoinBox>
-        <CoinText>{point}P</CoinText>
+        <CoinText>{userData.points}P</CoinText>
         <CoinUse>
           <img
             src={`${process.env.PUBLIC_URL}/images/point_use.svg`}
             onClick={onClickImg2}
+            alt=""
           />
         </CoinUse>
         <Rewritebox>
