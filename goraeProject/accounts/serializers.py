@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-
 from posts.models import UserInfo
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -12,8 +11,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class UserSerializer(ModelSerializer) :
-    userInfo = serializers.SerializerMethodField()
-
     def create(self, validated_data) :
         user = User.objects.create_user(
             username = validated_data['username'],
@@ -24,11 +21,14 @@ class UserSerializer(ModelSerializer) :
 
     class Meta :
         model = User
-        fields = ['id', 'username', 'password', 'email', 'userInfo']
+        fields = ['id', 'username', 'password', 'email', ] # swagger에서 '__all__'은 에러남 
 
 class MypageSerializer(ModelSerializer) :
-    user_info = UserInfoSerializer(source='userinfo', read_only=True)
+    #user_info = UserInfoSerializer(source='userinfo', read_only=True)
+    id = serializers.IntegerField(source='user.id', read_only=True)
+    email = serializers.ReadOnlyField(source='user.email')
+    username = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
-        model = User
-        fields = '__all__'
+        model = UserInfo
+        fields = ['id', 'username', 'email', 'user', 'nickname', 'profile', 'points', 'count',]

@@ -89,7 +89,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
+# 로그인 직접 구현 에 사용됨 
+# 세션 엔진 설정
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # 데이터베이스를 이용한 세션 저장
+SESSION_COOKIE_SECURE = True  # HTTPS 사용 시에만 쿠키 전송
+SESSION_COOKIE_HTTPONLY = True  # JavaScript에서 접근 불가하도록 설정
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 브라우저 종료 시 세션 만료
 
 # 모든 호스트 허용 
 CORS_ORIGIN_ALLOW_ALL = True
